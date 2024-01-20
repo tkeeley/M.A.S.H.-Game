@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MASH</title>
+  <style>
+    body {
+      font-family: Helvetica, Arial;
+      font-size: 27px;
+      margin: 0 auto;
+      max-width: 960px;
+      padding: 40px 10px;
+      line-height: 1.65em;
+      background: #fe70bc;
+      color: #ffffff;
+      font-weight: 300;
+    }
+    
+    .logo{
+      position:relative;
+      width: 300px;
+      margin:0 auto;
+    }
+    
+    .logo img {
+      margin: 0 auto;
+      display: block;
+    }
+    
+    .description {
+      margin: 80px auto 40px;
+      text-align: center;
+    }
+    
+    .bucket {
+      width: 100%;
+      margin-bottom: 40px;
+      display: inline-block;
+    }
+    
+    .choice-bucket {
+      width: 25%;
+      float: left;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .choice-bucket input {
+        font-size: 18px;
+        margin: 15px 4%;
+        padding: 16px 0;
+        width: 92%;
+        color: #BB475C;
+        border-radius: 6px;
+        border: 0;
+        outline: 0;
+        text-indent: 20px;
+    }
+    
+    .highlight {
+      font-size: 18px;
+      margin-left: 30px;
+      opacity: .8;
+      line-height: 24px;
+    }
+    
+    #answers {
+        /* opacity: 0; */
+        margin: 60px 0;
+        background: #fff;
+        border-radius: 6px;
+        color: #BB475C;
+        transition: 1s linear;
+        overflow: hidden; /* add this */
+    }
+    
+    #answers p {
+      max-width: 760px;
+      margin: auto;
+      padding: 80px 0;
+    }
+    
+    #answers p span {
+      font-weight: bold;
+    }
+    
+    form input[type=submit] {
+        background: #B5D269;
+        border: 0;
+        color: #fff;
+        font-size: 20px;
+        padding: 1em 2em;
+        cursor: pointer;
+        margin: 0 auto 60px;
+        display: block;
+        text-align: center;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+    
+    .hide {
+      opacity: 0;
+      height: 0;
+    }
+    
+    .show {
+      opacity: 1;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <form action="" method="post" id="mash">
+    <div id="answers" class="hide">
+      <p>Your home is a <span id="house"></span> with <span id="friends"></span>. You're a <span id="job"></span> and have <span id="kids"></span>.</p>
+    </div>
+
+    <div class="bucket">
+      <div class="choice-bucket">
+        <h4 class="highlight">Your future house?</h4>
+        <input name="house[]" type="text">
+        <input name="house[]" type="text">
+        <input name="house[]" type="text">
+        <input name="house[]" type="text">
+      </div>
+
+      <div class="choice-bucket">
+        <h4 class="highlight">Your friends?</h4>
+        <input name="friends[]" type="text">
+        <input name="friends[]" type="text">
+        <input name="friends[]" type="text">
+        <input name="friends[]" type="text">
+      </div>
+
+      <div class="choice-bucket">
+        <h4 class="highlight">Your future job?</h4>
+        <input name="job[]" type="text">
+        <input name="job[]" type="text">
+        <input name="job[]" type="text">
+        <input name="job[]" type="text">
+      </div>
+
+      <div class="choice-bucket">
+        <h4 class="highlight">Number of kids?</h4>
+        <input name="kids[]" type="text">
+        <input name="kids[]" type="text">
+        <input name="kids[]" type="text">
+        <input name="kids[]" type="text">
+      </div>
+    </div>
+
+    <input type="submit" value="Tell my fortune">
+  </form>
+
+  <script>
+    function random_choice(num) {
+      var num = num || 4;
+      return Math.floor(Math.random() * num);
+    }
+
+    function mash_choice() {
+      var mash = ['mansion', 'apartment', 'shack', 'house'];
+      var randomNum = random_choice(4);
+      return mash[randomNum];
+    }
+
+    function get_answer(category) {
+      var choices = [];
+      var selector = 'input[name="' + category + '[]"]';
+      var inputs = document.querySelectorAll(selector);
+      var answer;
+
+      for (var i = 0; i < inputs.length; i++) {
+        answer = inputs[i].value;
+        if (answer !== '') {
+          choices.push(answer);
+        }
+      }
+
+      return choices[random_choice(choices.length)];
+    }
+
+    function fill_in_answers(answers) {
+      var house = document.querySelector('#house');
+      var job = document.querySelector('#job');
+      var friends = document.querySelector('#friends');
+      var kids = document.querySelector('#kids');
+    
+      house.innerText = answers['house'];
+      job.innerText = answers['job'];
+      friends.innerText = answers['friends'];
+    
+      // Get the number of kids entered
+      var numKids = parseInt(answers['kids']);
+    
+      // Update the text for kids based on the number
+      if (numKids === 1) {
+        kids.innerText = numKids + ' kid';
+      } else {
+        kids.innerText = numKids + ' kids';
+      }
+    }
+
+    function handle_submission(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+
+      var answers = {
+        'house': get_answer('house'),
+        'job': get_answer('job'),
+        'friends': get_answer('friends'),
+        'kids': get_answer('kids')
+      };
+
+      fill_in_answers(answers);
+
+      var answer_div = document.querySelector('#answers');
+      answer_div.classList.add('show');
+    }
+
+    var form = document.querySelector('#mash');
+    form.addEventListener('submit', handle_submission);
+  </script>
+</body>
+</html>
